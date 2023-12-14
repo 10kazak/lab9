@@ -1,0 +1,97 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<queue>
+#include<clocale>
+
+#define MAX_VERTICES 100
+
+// Функция для генерации случайной матрицы смежности
+void generrand(int matrix[MAX_VERTICES][MAX_VERTICES], int numVertices) {
+int i, j;
+for (i = 0; i<numVertices; i++) {
+for (j = i; j <numVertices; j++) {
+matrix[i][j] = rand() % 2;
+matrix[j][i] = matrix[i][j];
+if (i == j) matrix[i][j] = 0;
+}
+    }
+}
+
+// Процедура для вывода списка смежности графа
+void printAdjacencyList(int adjacencyList[MAX_VERTICES][MAX_VERTICES], int numVertices) {
+printf("Список смежности графа:\n");
+for (int i = 0; i<numVertices; i++) {
+printf("Вершина %d: ", i);
+for (int j = 0; j <numVertices; j++) {
+if (adjacencyList[i][j] == 1) {
+printf("%d ", j);
+}
+        }
+printf("\n");
+    }
+}
+
+// Функция для поиска расстояний в графе с использованием BFS
+void bfs(int matrix[MAX_VERTICES][MAX_VERTICES], int numVertices, int startNode) {
+bool visited[MAX_VERTICES] = { false };
+int distances[MAX_VERTICES] = { 0 };
+std::queue<int> q;
+
+q.push(startNode);
+    visited[startNode] = true;
+
+while(!q.empty()) {
+int currentNode = q.front();
+q.pop();
+
+for (int i = 0; i<numVertices; i++) {
+if (matrix[currentNode][i] && !visited[i]) {
+q.push(i);
+                visited[i] = true;
+                distances[i] = distances[currentNode] + 1;
+            }
+        }
+    }
+
+// ВыводимрасстоянияотstartNodeдовсехостальныхузлов
+for (int i = 0; i<numVertices; i++) {
+printf("Расстояние от ребра %d дор ебра %d: %d\n", startNode, i, distances[i]);
+    }
+}
+
+int main() {
+setlocale(LC_ALL, "Russian");
+srand(time(NULL)); 
+
+int numVertices; 
+printf("Введите количество вершин в графе: ");
+scanf("%d", &numVertices);
+
+int matrix[MAX_VERTICES][MAX_VERTICES] = { 0 };
+generrand(matrix, numVertices);
+printf("Матрица смежности графа:\n");
+for (int i = 0; i<numVertices; i++) {
+for (int j = 0; j <numVertices; j++) {
+printf("%d ", matrix[i][j]);
+        }
+printf("\n");
+    }
+
+printAdjacencyList(matrix, numVertices);
+
+int startNode;
+printf("Введите начальный узел для поиска расстояний: ");
+scanf("%d", &startNode);
+
+
+clock_t start = clock();
+bfs(matrix, numVertices, startNode);
+clock_t end = clock();
+double time_spent5 = (double)(end - start) / CLOCKS_PER_SEC;
+printf("time adjmatrix v wiriny: %f s.\n", time_spent5);
+getchar();
+getchar();
+return 0;
+}
